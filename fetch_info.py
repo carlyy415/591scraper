@@ -158,7 +158,7 @@ def main(
         time.sleep(random.random() * 5)
 
     df_new = pd.DataFrame(data)
-    optional_fields = ("租金含", "車位費", "管理費")
+    optional_fields = ("租金含", "車位費", "管理費", "社區")
     for field in optional_fields:
         if field not in df_new:
             df_new[field] = None
