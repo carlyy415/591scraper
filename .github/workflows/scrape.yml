@@ -41,3 +41,11 @@ jobs:
           else
             echo "Listing ID cache was not created."
           fi
+      - name: Save listing cache as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: listing-cache
+          path: cache/listings.jbl
+          if-no-files-found: warn
+          retention-days: 3
