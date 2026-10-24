@@ -30,15 +30,15 @@ jobs:
 
       - name: Test 591 listing scraper
         env:
-          X591URL: "https://rent.591.com.tw/list?region=1&section=7,4,3&price=30000$_55000$&layout=3,4"
+          X591URL: "https://rent.591.com.tw/list?region=1&section=7,4,3&price=30000$_55000$&layout=3,4&kind=1"
         run: |
           uv run python collect_list.py --max-pages 1 --quiet
           
       - name: Fetch listing details
         env:
-          X591URL: "https://rent.591.com.tw/list?region=1&section=7,4,3&price=30000$_55000$&layout=3,4"
+          X591URL: "https://rent.591.com.tw/list?region=1&section=7,4,3&price=30000$_55000$&layout=3,4&kind=1"
         run: |
-          uv run python fetch_info.py --limit 3 --headless
+          uv run python fetch_info.py --limit 100 --headless
           
       - name: Check detail CSV
         if: always()
