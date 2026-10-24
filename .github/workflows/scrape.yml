@@ -49,6 +49,49 @@ jobs:
             echo "Detail CSV not created."
           fi
 
+      - name: Sync CSV to Google Sheets
+        if: success()
+        env:
+          GOOGLE_SCRIPT_URL: ${{ secrets.GOOGLE_SCRIPT_URL }}
+          API_SECRET_KEY: ${{ secrets.API_SECRET_KEY }}
+        run: |
+          uv run python - <<'PY'
+          import csv
+          import json
+          import os
+          import urllib.request
+
+          csv_path = "cache/df_listings.csv"
+          url = os.environ["GOOGLE_SCRIPT_URL"]
+          secret = os.environ["API_SECRET_KEY"]
+
+          with open(csv_path, "r", encoding="utf-8-sig", newline="") as f:
+              rows = list(csv.DictReader(f))
+
+          if not rows:
+              raise SystemExit("CSV 沒有資料，停止同步。")
+
+          payload = json.dumps({
+              "secret": secret,
+              "rows": rows
+          }).encode("utf-8")
+
+          request = urllib.request.Request(
+              url,
+              data=payload,
+              headers={"Content-Type": "application/json"},
+              method="POST"
+          )
+
+          with urllib.request.urlopen(request, timeout=60) as response:
+              result = json.loads(response.read().decode("utf-8"))
+
+          print(json.dumps(result, ensure_ascii=False, indent=2))
+
+          if not result.get("ok"):
+              raise SystemExit("Google Sheets 同步失敗。")
+          PY
+
       - name: Show scraper output
         if: always()
         run: |
