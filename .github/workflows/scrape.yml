@@ -33,9 +33,11 @@ jobs:
           uv run python collect_list.py --max-pages 1 --quiet
           
       - name: Fetch listing details
+        env:
+          X591URL: "https://rent.591.com.tw/list?region=1&section=7,4,3&price=40000_,30000_40000&layout=3,4"
         run: |
           uv run python fetch_info.py --limit 3 --headless
-
+          
       - name: Check detail CSV
         if: always()
         run: |
