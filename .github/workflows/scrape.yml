@@ -3,6 +3,8 @@ name: Test 591 Scraper
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '17 2 * * *'
 
 jobs:
   scrape:
