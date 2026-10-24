@@ -31,6 +31,7 @@ def create_browser(headless: bool = False) -> ChromiumPage:
     opts = ChromiumOptions()
     if headless:
         opts.headless()
+    opts.set_argument("--no-sandbox")
     opts.set_argument("--disable-blink-features=AutomationControlled")
     opts.set_argument("--no-first-run")
     opts.set_argument("--no-default-browser-check")
