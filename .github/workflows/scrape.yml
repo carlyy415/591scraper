@@ -31,6 +31,21 @@ jobs:
           X591URL: "https://rent.591.com.tw/list?region=1&section=7,4,3&price=40000_,30000_40000&layout=3,4"
         run: |
           uv run python collect_list.py --max-pages 1 --quiet
+          
+      - name: Fetch listing details
+        run: |
+          uv run python fetch_info.py --limit 3 --headless
+
+      - name: Check detail CSV
+        if: always()
+        run: |
+          if [ -f cache/df_listings.csv ]; then
+            echo "Detail CSV created."
+            ls -lh cache/df_listings.csv
+            head -n 4 cache/df_listings.csv
+          else
+            echo "Detail CSV not created."
+          fi
 
       - name: Show scraper output
         if: always()
@@ -41,6 +56,7 @@ jobs:
           else
             echo "Listing ID cache was not created."
           fi
+          
       - name: Save listing cache as artifact
         if: always()
         uses: actions/upload-artifact@v4
