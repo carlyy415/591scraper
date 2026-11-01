@@ -130,3 +130,6 @@ dmypy.json
 .uv-cache
 
 cache
+
+# macOS
+.DS_Store
