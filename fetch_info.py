@@ -146,6 +146,10 @@ def main(
 
     print(f"Collecting {len(listing_ids)} entries...")
 
+    if not listing_ids:
+        print("No listing IDs to fetch. Did collect_list.py get blocked?")
+        raise typer.Exit(code=1)
+
     page = create_browser(headless=headless)
 
     data = []
