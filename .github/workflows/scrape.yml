@@ -28,17 +28,22 @@ jobs:
       - name: Install dependencies
         run: uv sync --frozen
 
+      - name: Install Xvfb
+        run: sudo apt-get update && sudo apt-get install -y xvfb
+
       - name: Test 591 listing scraper
         env:
           X591URL: "https://rent.591.com.tw/list?region=1&section=7,4,3&price=30000$_55000$&layout=3,4&kind=1"
         run: |
-          uv run python collect_list.py --max-pages 10 --quiet
+          xvfb-run -a --server-args="-screen 0 1920x1080x24" \
+            uv run python collect_list.py --max-pages 10
           
       - name: Fetch listing details
         env:
           X591URL: "https://rent.591.com.tw/list?region=1&section=7,4,3&price=30000$_55000$&layout=3,4&kind=1"
         run: |
-          uv run python fetch_info.py --limit 300 --headless
+          xvfb-run -a --server-args="-screen 0 1920x1080x24" \
+            uv run python fetch_info.py --limit 300
           
       - name: Check detail CSV
         if: always()
@@ -180,4 +185,13 @@ jobs:
           name: rental-listings-csv
           path: cache/df_listings.csv
           if-no-files-found: warn
+          retention-days: 7
+
+      - name: Save debug screenshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug
+          path: cache/debug/
+          if-no-files-found: ignore
           retention-days: 7
